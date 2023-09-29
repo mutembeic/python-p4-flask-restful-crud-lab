@@ -21,7 +21,7 @@ class TestPlant:
         assert(data["name"])
 
     def test_plant_by_id_patch_route_updates_is_in_stock(self):
-        '''returns JSON representing updated Plant object with "is_in_stock" = False at "/plants/<int:id>".'''
+        '''returns JSON representing updated Plant object with "is_in_stock" = False at "/plants/<int:id>/update_is_in_stock".'''
         with app.app_context():
             plant_1 = Plant.query.filter_by(id=1).first()
             plant_1.is_in_stock = True
@@ -29,8 +29,8 @@ class TestPlant:
             db.session.commit()
             
         response = app.test_client().patch(
-            '/plants/1',
-            json = {
+            '/plants/1/update_is_in_stock',  # Updated route
+            json={
                 "is_in_stock": False,
             }
         )

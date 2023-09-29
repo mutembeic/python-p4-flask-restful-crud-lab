@@ -1,9 +1,6 @@
-#!/usr/bin/env python3
-
 from flask import Flask, jsonify, request, make_response
 from flask_migrate import Migrate
 from flask_restful import Api, Resource
-
 from models import db, Plant
 
 app = Flask(__name__)
@@ -50,6 +47,22 @@ class PlantByID(Resource):
 
 api.add_resource(PlantByID, '/plants/<int:id>')
 
+
+class PlantUpdateIsInStock(Resource):
+    def patch(self, id):
+        data = request.get_json()
+        plant = Plant.query.get(id)
+
+        if not plant:
+            return make_response(jsonify({"message": "Plant not found"}), 404)
+
+        plant.is_in_stock = data.get("is_in_stock", plant.is_in_stock)
+        db.session.commit()
+
+        return make_response(plant.to_dict(), 200)
+
+
+api.add_resource(PlantUpdateIsInStock, '/plants/<int:id>/update_is_in_stock')
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
